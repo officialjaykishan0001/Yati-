@@ -19,37 +19,37 @@ const customIcon = L.icon({
 // Custom styles for the Select component
 const customStyles = {
     control: (provided) => ({
-      ...provided,
-      backgroundColor: 'white',  // background color for the input
-      borderColor: '#cccccc',      // border color
-      minHeight: '40px',           // control height
-      boxShadow: 'none', 
-      borderRadius: '15px',
-      marginBottom: '10px',
-      padding: "10px",     // remove default box-shadow
-      '&:hover': { borderColor: '#aaaaaa' } // change border color on hover
+        ...provided,
+        backgroundColor: 'white',  // background color for the input
+        borderColor: '#cccccc',      // border color
+        minHeight: '20px',           // control height
+        boxShadow: 'none',
+        borderRadius: '15px',
+        marginBottom: '10px',
+        padding: "2px",     // remove default box-shadow
+        '&:hover': { borderColor: '#aaaaaa' } // change border color on hover
     }),
     placeholder: (provided) => ({
-      ...provided,
-      color: '#888888',  // placeholder color
-      fontSize: '14px',
+        ...provided,
+        color: '#888888',  // placeholder color
+        fontSize: '14px',
     }),
     menu: (provided) => ({
-      ...provided,
-      zIndex: 9999,        // make sure the dropdown is above other elements
+        ...provided,
+        zIndex: 9999,        // make sure the dropdown is above other elements
     }),
     option: (provided, state) => ({
-      ...provided,
-      backgroundColor: state.isSelected ? '#4CAF50' : state.isFocused ? '#f0f0f0' : '#ffffff',
-      color: state.isSelected ? '#ffffff' : '#333333',
-      padding: '10px 15px',
+        ...provided,
+        backgroundColor: state.isSelected ? '#4CAF50' : state.isFocused ? '#f0f0f0' : '#ffffff',
+        color: state.isSelected ? '#ffffff' : '#333333',
+        padding: '10px 15px',
     }),
     singleValue: (provided) => ({
-      ...provided,
-      color: '#333333', // text color for selected value
+        ...provided,
+        color: '#333333', // text color for selected value
     }),
-  };
-  
+};
+
 const CenterMap = ({ coords }) => {
     const map = useMap();
 
@@ -64,6 +64,9 @@ const CenterMap = ({ coords }) => {
 
 
 const Map = () => {
+    // States to manage selected options
+    const [startPlaceSelected, setStartPlaceSelected] = useState(false);
+    const [endPlaceSelected, setEndPlaceSelected] = useState(false);
 
     const [route, setRoute] = useState([]);
     const [startPlace, setStartPlace] = useState('');
@@ -97,9 +100,10 @@ const Map = () => {
     const customFilterOption = (option, inputValue) => {
         return option.label.toLowerCase().includes(inputValue.toLowerCase());
     };
-    const handleSelectChange = (option, setCoords, setPlace) => {
+    const handleSelectChange = (option, setCoords, setPlace, setNextVisible) => {
         setCoords([option.value.lat, option.value.lon]);
         setPlace(option.label);
+        setNextVisible(true); // Show the next field or button
     };
 
     useEffect(() => {
@@ -122,14 +126,16 @@ const Map = () => {
 
         fetchDirections();
     }, [startCoords, endCoords, apiKey]);
-    
+
 
     return (
         <div className='min-h-[75vh]'>
             <div className="select-container pt-[15px] px-[15px] flex flex-col  ">
                 <span className='pb-[10px] px-[10px] font-bold'>Welcome Username,</span>
+
+                {/* First Select Input */}
                 <Select
-                    styles={customStyles}  // Apply custom styles
+                    styles={customStyles}
                     placeholder="Pick Up"
                     options={startOptions}
                     onInputChange={(input) => {
@@ -137,27 +143,39 @@ const Map = () => {
                             fetchAutocompleteOptions(input, setStartOptions);
                         }
                     }}
-                    onChange={(option) => handleSelectChange(option, setStartCoords, setStartPlace)}
-                    filterOption={customFilterOption}
-                    />
-
-                <Select
-                    styles={customStyles} 
-                    placeholder="where are yo going today?"
-                    options={endOptions}
-                    onInputChange={(input) => {
-                        if (input) {
-                            fetchAutocompleteOptions(input, setEndOptions);
-                        }
-                    }}
-                    onChange={(option) => handleSelectChange(option, setEndCoords, setEndPlace)}
+                    onChange={(option) =>
+                        handleSelectChange(option, setStartCoords, setStartPlace, setStartPlaceSelected)
+                    }
                     filterOption={customFilterOption}
                 />
 
-                <button className='bg-violet-950 text-white rounded-[20px] p-[10px] mb-[11px] font-medium'>Find a bus</button>
+                {/* Second Select Input - Displayed only after first is selected */}
+                {startPlaceSelected && (
+                    <Select
+                        styles={customStyles}
+                        placeholder="Where are you going today?"
+                        options={endOptions}
+                        onInputChange={(input) => {
+                            if (input) {
+                                fetchAutocompleteOptions(input, setEndOptions);
+                            }
+                        }}
+                        onChange={(option) =>
+                            handleSelectChange(option, setEndCoords, setEndPlace, setEndPlaceSelected)
+                        }
+                        filterOption={customFilterOption}
+                    />
+                )}
+
+                {/* Button - Displayed only after second select is selected */}
+                {endPlaceSelected && (
+                    <button className="bg-violet-950 text-white rounded-[20px] p-[8px] mb-[11px] font-medium">
+                        Find a bus
+                    </button>
+                )}
             </div>
             <div >
-                <MapContainer center={startCoords ? startCoords : [20.5937, 78.9629]} zoom={14} style={{ height: '50vh', width: '100%' }} className='z-0'>
+                <MapContainer center={startCoords ? startCoords : [20.5937, 78.9629]} zoom={14} style={{ height: '100vh', width: '100%' }} className='z-0'>
                     <TileLayer
                         url={`https://maps.geoapify.com/v1/tile/osm-liberty/{z}/{x}/{y}.png?apiKey=${apiKey}`}
                         attribution='Powered by <a href="https://www.geoapify.com/">Geoapify</a> | © OpenStreetMap contributors'

@@ -15,9 +15,9 @@ const Navbar = ({setMenuButtonClick, menuButtonClick}) => {
                         <path d="M8.99963 17C8.99963 17 3.99968 13.3176 3.99966 12C3.99965 10.6824 8.99966 7 8.99966 7" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                 </div>
-                <div className=" text-[45px] font-medium"> Yati </div>
+                <div className=" text-[30px] font-bold"> Yati </div>
                 <div className="">
-                    <img onClick={handleClick} width="40" height="40" src="https://img.icons8.com/glyph-neue/50/connection-status-off.png" alt="connection-status-off" />
+                    <img onClick={handleClick} width="30" height="30" src="https://img.icons8.com/glyph-neue/50/connection-status-off.png" alt="connection-status-off" />
                 </div>
             </div>
             <hr />

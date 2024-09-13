@@ -1,7 +1,12 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Signup = () => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/home')  
+  }
   return (
     <div>
         <div className='login-route flex flex-col justify-center items-center gap-12 h-[100vh] w-full bg-[#333]'>
@@ -32,7 +37,7 @@ const Signup = () => {
             <input type="email" placeholder='Email' className='bg-gray-100 outline-black border border-gray-600 rounded-2xl mt-2 mx-0 py-3 px-[2px] pl-7 ' />
             <input type="password" placeholder='Password' className='bg-gray-100 outline-black border border-gray-600 rounded-2xl mt-2 mx-0 py-3 px-[2px] pl-7 ' />
             <input type="password" placeholder='Confirm Password' className='bg-gray-100 outline-black border border-gray-600 rounded-2xl mt-2 mx-0 py-3 px-[2px] pl-7 ' />
-            <button className='border border-black rounded-[20px] my-3 mx-0 p-[10px] cursor-pointer font-bold bg-gray-200'>Sign up</button>
+            <button onClick={handleClick} className='border border-black rounded-[20px] my-3 mx-0 p-[10px] cursor-pointer font-bold bg-gray-200'>Sign up</button>
             <p className='flex justify-center items-center font-semibold text-sm'>Already have an accound? <Link to={`/login`} ><span>&nbsp; Log In</span></Link></p>
           </form>
         </div>
